@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  db:
+    container_name: mysql_test
+    # Definimos un nombre al contenedor
+    image: mysql:5.7.22
+    # Definimos nuestra imagen mysql
+    restart: always
+    # Agregar políticas de reinicio
+    environment:
+      MYSQL_DATABA: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: passwordroot
+      TZ: America/Guatemala
+      # Define zona horario de Mysql
+    ports:
+      - "33066:3306"
+      # Puertos expuestos por mysql
+    volumes:
+      - ./my-db:/var/lib/mysql
+      # Creamos la carpeta

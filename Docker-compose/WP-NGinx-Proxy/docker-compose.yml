@@ -1,0 +1,66 @@
+version: '3.3'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./config-nginx:/etc/nginx/conf.d
+      - certs:/etc/nginx/certs:ro
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    labels:
+      - com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart: unless-stopped
+    environment:
+      - NGINX_PROXY_CONTAINER=nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs:rw
+      - vhostd:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  db:
+    image: yobasystems/alpine-mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Mil890823@
+      MYSQL_USER: vyxer
+      MYSQL_PASSWORD: Mil890823@
+      MYSQL_DATABASE: centrovirtual
+
+  wplz:
+    depends_on:
+      - db
+    image: wordpress:latest
+    expose:
+      - "80"
+      - "443"
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: vyxer
+      WORDPRESS_DB_PASSWORD: Mil890823@
+      WORDPRESS_DB_NAME: centrovirtual
+      VIRTUAL_HOST: interzonemx.duckdns.org
+      LETSENCRYPT_HOST: interzonemx.duckdns.org
+      LETSENCRYPT_EMAIL: interzonegdl@gmail.com
+    volumes:
+      - ./wordpress:/var/www/html/
+    
+
+volumes:
+  certs:
+  html:
+  vhostd:
