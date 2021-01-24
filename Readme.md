@@ -14,5 +14,3 @@ _Docker_
 
 - [Nginx](./Docker/Nginx)
 - [Comandos en docker](./Docker/Readme.md)
-
-###### Santiago
